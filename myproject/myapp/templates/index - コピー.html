@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <form id="form" class="mb-3">
+    <div class="form-group">
+      <label for="inputText">入力テキスト</label>
+      <textarea class="form-control" id="inputText" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">ルビを振る</button>
+  </form>
+
+  <div id="result" class="mt-5"></div>
+</div>
+
+<script>
+const form = document.querySelector('#form');
+const input = document.querySelector('#inputText');
+const resultDiv = document.querySelector('#result');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const inputText = input.value.trim();
+  if (inputText.length === 0) {
+    alert('入力が空です');
+    return;
+  }
+
+  fetch('/ruby/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ input_text: inputText })
+  })
+  .then(response => response.json())
+  .then(data => {
+    resultDiv.innerHTML = data.output_html;
+  })
+  .catch(error => {
+    console.error(error);
+    alert('ルビ振りに失敗しました');
+  });
+});
+</script>
+{% endblock %}
